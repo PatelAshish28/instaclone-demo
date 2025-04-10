@@ -30,7 +30,7 @@ const Profile = () => {
   // Handle follow/unfollow with Axios
   const handleFollowToggle = async () => {
     try {
-      const res = await axios.post(`https://instaclone-demo.onrender.com/api/v1/user/followorunfollow/:id`)
+      const res = await axios.post(`https://instaclone-demo.onrender.com/api/v1/user/followorunfollow/${user._id}`)
       if (res.status === 200) {
         setIsFollowing(prev => !prev)
       }
