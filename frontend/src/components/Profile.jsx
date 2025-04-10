@@ -15,11 +15,13 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState('posts')
   const { userProfile, user } = useSelector(store => store.auth)
 
-  const isLoggedInUserProfile = true
-  const isFollowing = false
+  const isLoggedInUserProfile = user?._id === userProfile?._id;
+  const isFollowing = false;
   const displayedPost = activeTab === 'posts' ? userProfile?.posts : userProfile?.bookmarks
 
-  const handleTabChange = (tab) => setActiveTab(tab)
+ const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
