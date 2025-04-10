@@ -1,11 +1,11 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authSlice from "./authSlice.js";
 import postSlice from './postSlice.js';
-import socketSlice from "./socketSlice.js"
+import socketSlice from "./socketSlice.js";
 import chatSlice from "./chatSlice.js";
 import rtnSlice from "./rtnSlice.js";
 
-import { 
+import {
     persistReducer,
     FLUSH,
     REHYDRATE,
@@ -13,25 +13,25 @@ import {
     PERSIST,
     PURGE,
     REGISTER,
-} from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
-
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-}
+    blacklist: ['socketio'], // ✅ Exclude socket.io from being persisted
+};
 
 const rootReducer = combineReducers({
-    auth:authSlice,
-    post:postSlice,
-    socketio:socketSlice,
-    chat:chatSlice,
-    realTimeNotification:rtnSlice
-})
+    auth: authSlice,
+    post: postSlice,
+    socketio: socketSlice,
+    chat: chatSlice,
+    realTimeNotification: rtnSlice,
+});
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
     reducer: persistedReducer,
@@ -42,4 +42,5 @@ const store = configureStore({
             },
         }),
 });
+
 export default store;
