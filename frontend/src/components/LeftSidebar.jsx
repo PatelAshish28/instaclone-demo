@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setAuthUser } from '@/redux/authSlice'
 import CreatePost from './CreatePost'
+import SearchBar from './SearchBar';
 import { setPosts, setSelectedPost } from '@/redux/postSlice'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { Button } from './ui/button'
@@ -25,6 +26,7 @@ const LeftSidebar = () => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
 
   const logoutHandler = async () => {
     try {
@@ -47,6 +49,7 @@ const LeftSidebar = () => {
     else if (textType === "Profile") navigate(`/profile/${user?._id}`);
     else if (textType === "Home") navigate("/");
     else if (textType === 'Messages') navigate("/chat");
+     else if (textType === 'Search') setSearchModalOpen(true);
     else toast.info("Coming soon!");
     setMenuOpen(false); // Close mobile menu after action
   }
@@ -137,7 +140,12 @@ const LeftSidebar = () => {
           </DialogContent>
         </Dialog>
       </div>
-
+      <Dialog open={searchModalOpen} onOpenChange={setSearchModalOpen}>
+  <DialogContent className="w-[90%] max-w-md p-4 rounded-lg">
+    <h2 className="text-lg font-semibold mb-2">Search Users</h2>
+    <SearchBar closeModal={() => setSearchModalOpen(false)} />
+  </DialogContent>
+</Dialog>
       <CreatePost open={open} setOpen={setOpen} />
     </>
   )
