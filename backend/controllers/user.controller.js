@@ -100,6 +100,18 @@ export const logout = async (_, res) => {
         console.log(error);
     }
 };
+
+// In your user.controller.js
+export const searchUsers = async (req, res) => {
+  const { query } = req.query;
+  const users = await User.find({
+    username: { $regex: query, $options: "i" },
+  }).select("username _id profilePicture");
+
+  res.status(200).json({ users });
+};
+
+
 export const getProfile = async (req, res) => {
     try {
         const userId = req.params.id;
