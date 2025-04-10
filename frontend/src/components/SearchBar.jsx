@@ -14,7 +14,7 @@ const SearchBar = () => {
     if (value.trim() === '') return setResults([]);
 
     try {
-      const res = await axios.get(`/api/v1/user/search?query=${value}`);
+      const res = await axios.get(`https://instaclone-demo.onrender.com/api/v1/user/search?query=${value}`);
       setResults(res.data.users);
     } catch (error) {
       console.error('Search error:', error);
