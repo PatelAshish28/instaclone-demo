@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import useGetUserProfile from '@/hooks/useGetUserProfile'
 import { Link, useParams } from 'react-router-dom'
@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import { Button } from './ui/button'
 import { Badge } from './ui/badge'
 import { AtSign, Heart, MessageCircle } from 'lucide-react'
+import axios from 'axios'
 
 const Profile = () => {
   const params = useParams()
@@ -13,14 +14,33 @@ const Profile = () => {
   useGetUserProfile(userId)
 
   const [activeTab, setActiveTab] = useState('posts')
-  const { userProfile, user } = useSelector(store => store.auth)
+  const [isFollowing, setIsFollowing] = useState(false)
 
-  const isLoggedInUserProfile = user?._id === userProfile?._id;
-  const isFollowing = false;
+  const { userProfile, user } = useSelector(store => store.auth)
+  const isLoggedInUserProfile = user?._id === userProfile?._id
   const displayedPost = activeTab === 'posts' ? userProfile?.posts : userProfile?.bookmarks
 
- const handleTabChange = (tab) => {
-    setActiveTab(tab);
+  // Update follow state when profile loads
+  useEffect(() => {
+    if (userProfile && user) {
+      setIsFollowing(userProfile.followers?.includes(user._id))
+    }
+  }, [userProfile, user])
+
+  // Handle follow/unfollow with Axios
+  const handleFollowToggle = async () => {
+    try {
+      const res = await axios.post(`https://instaclone-demo.onrender.com/api/v1/user/followorunfollow/:id`)
+      if (res.status === 200) {
+        setIsFollowing(prev => !prev)
+      }
+    } catch (err) {
+      console.error('Follow/Unfollow error:', err)
+    }
+  }
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab)
   }
 
   return (
@@ -49,22 +69,20 @@ const Profile = () => {
                   <Button variant="secondary" className="h-8">Ad tools</Button>
                 </>
               ) : (
-                isFollowing ? (
-                  <>
-                    <Button variant="secondary" className="h-8">Unfollow</Button>
-                    <Button variant="secondary" className="h-8">Message</Button>
-                  </>
-                ) : (
-                  <Button className="bg-[#0095F6] hover:bg-[#3192d2] h-8">Follow</Button>
-                )
+                <Button
+                  onClick={handleFollowToggle}
+                  className={`${isFollowing ? 'bg-gray-300' : 'bg-[#0095F6] hover:bg-[#3192d2]'} h-8`}
+                >
+                  {isFollowing ? 'Unfollow' : 'Follow'}
+                </Button>
               )}
             </div>
 
             {/* Counts */}
             <div className="flex flex-wrap gap-4 text-sm text-gray-700">
-              <p><span className="font-semibold">{userProfile?.posts.length}</span> posts</p>
-              <p><span className="font-semibold">{userProfile?.followers.length}</span> followers</p>
-              <p><span className="font-semibold">{userProfile?.following.length}</span> following</p>
+              <p><span className="font-semibold">{userProfile?.posts?.length || 0}</span> posts</p>
+              <p><span className="font-semibold">{userProfile?.followers?.length || 0}</span> followers</p>
+              <p><span className="font-semibold">{userProfile?.following?.length || 0}</span> following</p>
             </div>
 
             {/* Bio */}
@@ -82,10 +100,16 @@ const Profile = () => {
       {/* Tabs */}
       <div className="mt-10 border-t border-gray-200">
         <div className="flex justify-center gap-6 text-xs sm:text-sm font-medium py-3">
-          <span className={`cursor-pointer ${activeTab === 'posts' ? 'text-black font-bold' : 'text-gray-500'}`} onClick={() => handleTabChange('posts')}>
+          <span
+            className={`cursor-pointer ${activeTab === 'posts' ? 'text-black font-bold' : 'text-gray-500'}`}
+            onClick={() => handleTabChange('posts')}
+          >
             POSTS
           </span>
-          <span className={`cursor-pointer ${activeTab === 'saved' ? 'text-black font-bold' : 'text-gray-500'}`} onClick={() => handleTabChange('saved')}>
+          <span
+            className={`cursor-pointer ${activeTab === 'saved' ? 'text-black font-bold' : 'text-gray-500'}`}
+            onClick={() => handleTabChange('saved')}
+          >
             SAVED
           </span>
           <span className="text-gray-400 cursor-not-allowed">REELS</span>
