@@ -75,7 +75,7 @@ const LeftSidebar = () => {
 
   const SidebarContent = () => (
     <div className='flex flex-col'>
-      <h1 className='my-8 pl-3 font-bold text-xl'>RTS</h1>
+      <h1 className='my-8 pl-3 font-bold text-xl'>𝓡𝓣𝓢</h1>
       <div>
         {sidebarItems.map((item, index) => (
           <div
